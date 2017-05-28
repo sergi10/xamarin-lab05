@@ -24,4 +24,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/CallButton" />
+    <TextView
+        android:text="Text huiiuh"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ResultTextView"
+        android:capitalize="words"
+        android:textColor="@android:color/holo_green_light"
+        android:textStyle="normal"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:textSize="20dp" />
 </LinearLayout>
