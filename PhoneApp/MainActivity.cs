@@ -8,6 +8,8 @@ namespace PhoneApp
     [Activity(Label = "Phone App", MainLauncher = true, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
+        static readonly System.Collections.Generic.List<string> PhoneNumbers = new System.Collections.Generic.List<string>();
+
         protected async override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -18,20 +20,21 @@ namespace PhoneApp
             var PhoneNumberText = FindViewById<EditText>(Resource.Id.PhoneNumberText);
             var TranslateButton = FindViewById<Button>(Resource.Id.TranslateButton);
             var CallButton = FindViewById<Button>(Resource.Id.CallButton);
+            var CallHistoryButton = FindViewById<Button>(Resource.Id.CallHistoryButton);
             var MessageView = FindViewById<TextView>(Resource.Id.ResultTextView);
 
             CallButton.Enabled = false;
             MessageView.Enabled = false;
-            var ServiceClient = new SALLab05.ServiceClient();
-            string StudentEmail = "email at domain dot net";
-            string Password = "PassWord";
+            var ServiceClient = new SALLab06.ServiceClient();
+            string StudentEmail = "sestada@praxya.es";
+            string Password = "N0v3mb3rPraxya";
             string myDevice = Android.Provider.Settings.Secure.GetString(ContentResolver, Android.Provider.Settings.Secure.AndroidId);
             var Result = await ServiceClient.ValidateAsync(StudentEmail, Password, myDevice);
 
             MessageView.Text = $"{ Result.Status}\n{ Result.Fullname}\n{ Result.Token}";
 
             //MessageView.Text = this.Validate().Result;
-           // MessageView.Text = "asdfbib \napshdfaosdnfon\n apsodfna \t 123";
+            // MessageView.Text = "asdfbib \napshdfaosdnfon\n apsodfna \t 123";
 
             var TranslatedNumber = string.Empty;
             TranslateButton.Click += (object sender, System.EventArgs e) =>
@@ -59,6 +62,9 @@ namespace PhoneApp
                 CallDialog.SetMessage($"Llamar al número {TranslatedNumber}?");
                 CallDialog.SetNeutralButton("Llamar", delegate
                 {
+                    //Lab06
+                    PhoneNumbers.Add(TranslatedNumber);
+                    CallHistoryButton.Enabled = true;
                     // Crear un intento para marcar el número telefónico
                     var CallIntent = new Android.Content.Intent(Android.Content.Intent.ActionCall);
                     CallIntent.SetData(Android.Net.Uri.Parse($"tel: { TranslatedNumber}"));
@@ -68,17 +74,14 @@ namespace PhoneApp
                 // Mostrar el cuadro de diálogo al usuario y esperar una respuesta.
                 CallDialog.Show();
             };
+
+            CallHistoryButton.Click += (object sender, System.EventArgs e) =>
+            {
+                var Intent = new Android.Content.Intent(this, typeof(CallHistoryActivity));
+                Intent.PutStringArrayListExtra("phone_numbers", PhoneNumbers);
+                StartActivity(Intent);
+            };
         }
-        private async Task<string> Validate()
-        {
-            var ServiceClient = new SALLab05.ServiceClient();
-            string StudentEmail = "sestada@praxya.es";
-            string Password = "N0v3mb3rPraxya";
-            string myDevice = Android.Provider.Settings.Secure.GetString(ContentResolver, Android.Provider.Settings.Secure.AndroidId);
-            var Result = await ServiceClient.ValidateAsync(StudentEmail, Password, myDevice);
-           
-            var txtResult = $"{ Result.Status}\n{ Result.Fullname}\n{ Result.Token}";
-            return txtResult;
-        }
+       
     }
 }
